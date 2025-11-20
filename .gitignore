@@ -1,0 +1,48 @@
+# Android
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+/android/app/build/
+/android/build/
+/android/.gradle/
+/android/captures/
+
+# iOS
+/ios/DerivedData/
+/ios/.symlinks/
+/ios/Pods/
+/ios/.generated/
+/ios/Flutter/App.framework/
+/ios/Flutter/Flutter.framework/
+/ios/Flutter/Flutter.podspec/
+
+# Flutter
+/build/
+/.dart_tool/
+/.pub-cache/
+/.pub/
+/packages
+flutter_*.png
+*.flutter-plugins
+*.pub-cache
+*.pub-dependencies
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backend files (jangan include)
+/backend/
+/database/
+/laragon/
