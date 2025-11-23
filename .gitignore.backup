@@ -43,4 +43,6 @@ flutter_*.png
 Thumbs.db
 
 # Backend files (jangan include)
+/backend/
+/database/
 /laragon/
