@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> 
+class _RegisterScreenState extends State<RegisterScreen> 
     with SingleTickerProviderStateMixin {
   
   late AnimationController _controller;
@@ -15,11 +15,13 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<double> _floatAnimation3;
   
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  bool _rememberMe = false;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -56,15 +58,23 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  void _login() async {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Passwords do not match')),
+        );
+        return;
+      }
+
       setState(() => _isLoading = true);
       
       // Simulate API call
       await Future.delayed(Duration(seconds: 2));
       
       setState(() => _isLoading = false);
-      print('Login successful!');
+      print('Registration successful!');
+      // TODO: Navigate to login or dashboard
     }
   }
 
@@ -72,12 +82,16 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() => _obscurePassword = !_obscurePassword);
   }
 
+  void _toggleConfirmPasswordVisibility() {
+    setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Animated Gradient Background
+          // Animated Gradient Background (same as login)
           AnimatedBuilder(
             animation: _gradientAnimation,
             builder: (context, child) {
@@ -92,12 +106,7 @@ class _LoginScreenState extends State<LoginScreen>
                       Color(0xFFf7f4f0),
                       Color(0xFFeae6e0),
                     ],
-                    stops: [
-                      0.0,
-                      0.25,
-                      0.5,
-                      0.75
-                    ],
+                    stops: [0.0, 0.25, 0.5, 0.75],
                     transform: GradientRotation(
                       _gradientAnimation.value * 3.14 * 2,
                     ),
@@ -107,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen>
             },
           ),
 
-          // Floating Shapes
+          // Floating Shapes (same as login)
           _buildFloatingShapes(),
 
           // Main Content
@@ -118,7 +127,18 @@ class _LoginScreenState extends State<LoginScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo with Glass Effect
+                  // Back Button
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_rounded, color: Color(0xFF1c1c1c)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  // Logo
                   Container(
                     width: 80,
                     height: 80,
@@ -141,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ],
                     ),
                     child: Icon(
-                      Icons.shopping_bag_rounded,
+                      Icons.person_add_rounded,
                       color: Colors.white,
                       size: 35,
                     ),
@@ -153,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen>
                   Column(
                     children: [
                       Text(
-                        'WishListify',
+                        'Create Account',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w800,
@@ -163,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Curate your shopping dreams',
+                        'Join WishListify today',
                         style: TextStyle(
                           fontSize: 16,
                           color: Color(0xFF1c1c1c).withOpacity(0.7),
@@ -210,6 +230,60 @@ class _LoginScreenState extends State<LoginScreen>
                       key: _formKey,
                       child: Column(
                         children: [
+                          // Name Field
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF1c1c1c).withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _nameController,
+                              decoration: InputDecoration(
+                                hintText: 'Full name',
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF1c1c1c).withOpacity(0.4),
+                                ),
+                                prefixIcon: Container(
+                                  margin: EdgeInsets.only(right: 12),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF325eba).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(Icons.person_rounded, 
+                                      color: Color(0xFF325eba)),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20, 
+                                  vertical: 16,
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: Color(0xFF1c1c1c),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your name';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 20),
+
                           // Email Field
                           Container(
                             decoration: BoxDecoration(
@@ -225,7 +299,7 @@ class _LoginScreenState extends State<LoginScreen>
                             child: TextFormField(
                               controller: _emailController,
                               decoration: InputDecoration(
-                                hintText: 'Enter your email',
+                                hintText: 'Email address',
                                 hintStyle: TextStyle(
                                   color: Color(0xFF1c1c1c).withOpacity(0.4),
                                 ),
@@ -283,7 +357,7 @@ class _LoginScreenState extends State<LoginScreen>
                               controller: _passwordController,
                               obscureText: _obscurePassword,
                               decoration: InputDecoration(
-                                hintText: 'Enter your password',
+                                hintText: 'Password',
                                 hintStyle: TextStyle(
                                   color: Color(0xFF1c1c1c).withOpacity(0.4),
                                 ),
@@ -334,49 +408,71 @@ class _LoginScreenState extends State<LoginScreen>
 
                           SizedBox(height: 20),
 
-                          // Remember Me & Forgot Password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: _rememberMe,
-                                    onChanged: (value) {
-                                      setState(() => _rememberMe = value!);
-                                    },
-                                    activeColor: Color(0xFF325eba),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
+                          // Confirm Password Field
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF1c1c1c).withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: _obscureConfirmPassword,
+                              decoration: InputDecoration(
+                                hintText: 'Confirm password',
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF1c1c1c).withOpacity(0.4),
+                                ),
+                                prefixIcon: Container(
+                                  margin: EdgeInsets.only(right: 12),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF325eba).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  Text(
-                                    'Remember me',
-                                    style: TextStyle(
-                                      color: Color(0xFF1c1c1c).withOpacity(0.7),
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  child: Icon(Icons.lock_outline_rounded, 
+                                      color: Color(0xFF325eba)),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureConfirmPassword 
+                                        ? Icons.visibility_rounded
+                                        : Icons.visibility_off_rounded,
+                                    color: Color(0xFF325eba).withOpacity(0.6),
                                   ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  print('Forgot password tapped');
-                                },
-                                child: Text(
-                                  'Forgot password?',
-                                  style: TextStyle(
-                                    color: Color(0xFF325eba),
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  onPressed: _toggleConfirmPasswordVisibility,
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20, 
+                                  vertical: 16,
                                 ),
                               ),
-                            ],
+                              style: TextStyle(
+                                color: Color(0xFF1c1c1c),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                return null;
+                              },
+                            ),
                           ),
 
-                          SizedBox(height: 24),
+                          SizedBox(height: 30),
 
-                          // Animated Login Button
+                          // Register Button
                           Container(
                             width: double.infinity,
                             height: 56,
@@ -402,7 +498,7 @@ class _LoginScreenState extends State<LoginScreen>
                               color: Colors.transparent,
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(16),
-                                onTap: _isLoading ? null : _login,
+                                onTap: _isLoading ? null : _register,
                                 child: Stack(
                                   children: [
                                     // Shimmer Effect
@@ -441,13 +537,13 @@ class _LoginScreenState extends State<LoginScreen>
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 Icon(
-                                                  Icons.login_rounded,
+                                                  Icons.person_add_rounded,
                                                   color: Colors.white,
                                                   size: 20,
                                                 ),
                                                 SizedBox(width: 8),
                                                 Text(
-                                                  'Sign In',
+                                                  'Create Account',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 18,
@@ -465,24 +561,24 @@ class _LoginScreenState extends State<LoginScreen>
 
                           SizedBox(height: 24),
 
-                          // Register Link
+                          // Login Link
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'New here? ',
+                                'Already have an account? ',
                                 style: TextStyle(
                                   color: Color(0xFF1c1c1c).withOpacity(0.7),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                             GestureDetector(
+GestureDetector(
   onTap: () {
-    // Navigate to register screen
-    Navigator.pushNamed(context, '/register');
+    // Navigate back to login screen
+    Navigator.pushNamed(context, '/login');
   },
   child: Text(
-    'Create Account',
+    'Sign In',
     style: TextStyle(
       color: Color(0xFF325eba),
       fontWeight: FontWeight.w600,
@@ -610,8 +706,10 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     _controller.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 }
